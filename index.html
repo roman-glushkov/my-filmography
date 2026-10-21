@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0c10" />
+    <meta
+      name="description"
+      content="Личная коллекция фильмов, сериалов, аниме и мультфильмов."
+    />
+    <title>Моя фильмография</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@17.0.0"></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Моя фильмография — на главную">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect
+                x="3"
+                y="5"
+                width="18"
+                height="14"
+                rx="3"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
+              <path
+                d="M8 5l4 5m1-5l4 5M3 10h18M8 19l4-5m1 5l4-5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <span>film<span class="brand-accent">log</span></span>
+        </a>
+        <div class="topbar-note">
+          <span class="live-dot"></span> Ваша личная коллекция
+        </div>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="page-title">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span class="eyebrow-line"></span> ЛИЧНАЯ БИБЛИОТЕКА
+            </p>
+            <h1 id="page-title">Моя <span>фильмография</span></h1>
+            <p class="hero-description">
+              Все истории, которые уже посмотрели, смотрите сейчас или оставили
+              на потом — в одном месте.
+            </p>
+          </div>
+          <button
+            class="button button-primary hero-add"
+            id="addItemBtn"
+            type="button"
+          >
+            <span class="button-plus" aria-hidden="true">+</span> Добавить
+            запись
+          </button>
+        </section>
+
+        <section class="stats-grid" aria-label="Статистика коллекции">
+          <article class="stat-card">
+            <div class="stat-icon stat-icon-purple" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13Z"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+                <path d="m10 8 5 4-5 4V8Z" fill="currentColor" />
+              </svg>
+            </div>
+            <div>
+              <p class="stat-label">Всего в коллекции</p>
+              <p class="stat-value" id="totalCount">0</p>
+            </div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon stat-icon-yellow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="8.5"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+                <path
+                  d="M12 7v5l3.5 2"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="stat-label">Сейчас смотрю</p>
+              <p class="stat-value" id="watchingCount">0</p>
+            </div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon stat-icon-green" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="m5 12.5 4.2 4.2L19 7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="stat-label">Уже просмотрено</p>
+              <p class="stat-value" id="watchedCount">0</p>
+            </div>
+          </article>
+        </section>
+
+        <section class="library-section" aria-labelledby="library-title">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">ВАША ПОДБОРКА</p>
+              <h2 id="library-title">
+                Моя коллекция
+                <span class="result-count" id="resultCount">0 записей</span>
+              </h2>
+            </div>
+          </div>
+
+          <div
+            class="toolbar"
+            role="search"
+            aria-label="Поиск, фильтры и сортировка"
+          >
+            <label class="search-box" for="searchInput">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle
+                  cx="10.8"
+                  cy="10.8"
+                  r="6.8"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="m16 16 4.2 4.2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <input
+                id="searchInput"
+                type="search"
+                placeholder="Название или франшиза..."
+                autocomplete="off"
+              />
+              <kbd>/</kbd>
+            </label>
+
+            <div class="filter-controls">
+              <label class="select-wrap" aria-label="Фильтр по типу">
+                <span class="visually-hidden">Тип</span>
+                <select id="typeFilter">
+                  <option value="all">Все типы</option>
+                  <option value="film">Фильмы</option>
+                  <option value="series">Сериалы</option>
+                  <option value="anime">Аниме</option>
+                  <option value="cartoon">Мультфильмы</option>
+                  <option value="universe">Вселенная</option>
+                </select>
+              </label>
+              <label class="select-wrap" aria-label="Фильтр по статусу">
+                <span class="visually-hidden">Статус</span>
+                <select id="statusFilter">
+                  <option value="all">Все статусы</option>
+                  <option value="watched">Просмотрено</option>
+                  <option value="watching">Смотрю</option>
+                  <option value="planned">Буду смотреть</option>
+                  <option value="dropped">Брошено</option>
+                </select>
+              </label>
+              <label class="select-wrap sort-wrap" aria-label="Сортировка">
+                <span class="visually-hidden">Сортировка</span>
+                <select id="sortFilter">
+                  <option value="title-asc">По алфавиту: А—Я</option>
+                  <option value="title-desc">По алфавиту: Я—А</option>
+                  <option value="rating-desc">
+                    По оценке: сначала высокие
+                  </option>
+                  <option value="count-desc">
+                    По количеству серий / частей
+                  </option>
+                  <option value="franchise">Группировать по франшизам</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div id="itemGrid" class="items-layout" aria-live="polite"></div>
+          <div id="emptyState" class="empty-state" hidden>
+            <div class="empty-icon" aria-hidden="true">⌕</div>
+            <h3 id="emptyTitle">Пока ничего не найдено</h3>
+            <p id="emptyDescription">Попробуйте изменить запрос или фильтры.</p>
+            <button
+              class="button button-secondary"
+              id="resetFiltersBtn"
+              type="button"
+            >
+              Сбросить фильтры
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span
+          >film<span class="brand-accent">log</span>
+          <span class="footer-separator">/</span> Ваша история просмотров</span
+        >
+        <span class="storage-note"
+          ><span class="storage-dot"></span> Данные сохраняются в этом
+          браузере</span
+        >
+      </footer>
+    </div>
+
+    <div class="modal" id="itemModal" aria-hidden="true">
+      <div
+        class="modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div class="modal-header">
+          <div>
+            <p class="section-kicker">КОЛЛЕКЦИЯ</p>
+            <h2 id="modalTitle">Новая запись</h2>
+            <p class="modal-subtitle">
+              Заполните информацию о фильме, сериале, аниме или вселенной.
+            </p>
+          </div>
+          <button
+            class="icon-button"
+            id="closeModalBtn"
+            type="button"
+            aria-label="Закрыть окно"
+          >
+            ×
+          </button>
+        </div>
+
+        <form id="itemForm" novalidate>
+          <input id="itemId" name="itemId" type="hidden" />
+          <div class="form-grid">
+            <div class="form-field field-full">
+              <label for="titleInput"
+                >Название <span class="required-mark">*</span></label
+              >
+              <input
+                id="titleInput"
+                name="title"
+                type="text"
+                maxlength="160"
+                placeholder="Например, Интерстеллар"
+                required
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="typeInput">Тип</label>
+              <select id="typeInput" name="type">
+                <option value="film">Фильм</option>
+                <option value="series">Сериал</option>
+                <option value="anime">Аниме</option>
+                <option value="cartoon">Мультфильм</option>
+                <option value="universe">Вселенная</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="statusInput">Статус</label>
+              <select id="statusInput" name="status">
+                <option value="watched">Просмотрено</option>
+                <option value="watching">Смотрю</option>
+                <option value="planned">Буду смотреть</option>
+                <option value="dropped">Брошено</option>
+              </select>
+            </div>
+
+            <div class="form-field field-full">
+              <label for="franchiseInput"
+                >Франшиза
+                <span class="optional-label">необязательно</span></label
+              >
+              <input
+                id="franchiseInput"
+                name="franchise"
+                type="text"
+                maxlength="120"
+                placeholder="Например, Marvel, Гарри Поттер"
+              />
+            </div>
+
+            <div class="form-field field-full">
+              <label for="commentInput"
+                >Комментарий
+                <span class="optional-label">необязательно</span></label
+              >
+              <textarea
+                id="commentInput"
+                name="comment"
+                rows="3"
+                maxlength="2000"
+                placeholder="Ваши впечатления, заметки или что стоит помнить о просмотре"
+              ></textarea>
+            </div>
+
+            <div class="form-field">
+              <label for="totalCountInput"
+                >Серий / частей
+                <span class="optional-label">необязательно</span></label
+              >
+              <input
+                id="totalCountInput"
+                name="totalCount"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="Например, 12"
+                inputmode="numeric"
+              />
+            </div>
+            <div class="form-field">
+              <label for="progressInput"
+                >Просмотрено
+                <span class="optional-label">необязательно</span></label
+              >
+              <input
+                id="progressInput"
+                name="progress"
+                type="number"
+                min="0"
+                step="1"
+                placeholder="Например, 5"
+                inputmode="numeric"
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="ratingInput"
+                >Личная оценка <span class="optional-label">1–10</span></label
+              >
+              <div class="rating-input-wrap">
+                <span aria-hidden="true">★</span>
+                <input
+                  id="ratingInput"
+                  name="rating"
+                  type="number"
+                  min="1"
+                  max="10"
+                  step="1"
+                  placeholder="—"
+                  inputmode="numeric"
+                />
+                <span class="rating-scale">/ 10</span>
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="posterInput"
+                >Ссылка на постер
+                <span class="optional-label">необязательно</span></label
+              >
+              <input
+                id="posterInput"
+                name="posterUrl"
+                type="url"
+                placeholder="https://..."
+                inputmode="url"
+              />
+            </div>
+          </div>
+
+          <p class="form-hint">
+            <span class="required-mark">*</span> — обязательное поле. Записи
+            сохраняются локально в вашем браузере.
+          </p>
+          <div class="modal-actions">
+            <button
+              class="button button-secondary"
+              id="cancelModalBtn"
+              type="button"
+            >
+              Отмена
+            </button>
+            <button
+              class="button button-primary"
+              id="saveItemBtn"
+              type="submit"
+            >
+              Сохранить запись
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
